@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/labstack/echo"
 
@@ -11,26 +12,31 @@ import (
 )
 
 func main() {
+	if err := Run(os.Args[1:]...); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+func Run(args ...string) error {
 	var confFile string
-	flag.StringVar(&confFile, "config", "", "config file path")
-	flag.Parse()
+	fs := flag.NewFlagSet("", flag.ContinueOnError)
+	fs.StringVar(&confFile, "config", "", "config file path")
+	fs.Parse(args)
 
 	cf, err := NewConfig(confFile)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
 	d, err := db.New(cf.DB)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
 	o, err := obs.New(cf.OBS)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
 	e := echo.New()
@@ -39,5 +45,5 @@ func main() {
 	e.POST("/collections", h.AddImage)
 	e.GET("/collections", h.GetImageList)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	return e.Start(":8080")
 }
