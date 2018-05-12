@@ -2,6 +2,7 @@ package obs
 
 import (
 	"io"
+	"path"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -10,8 +11,9 @@ import (
 )
 
 type OBS struct {
-	svc    *s3.S3
-	bucket *string
+	svc     *s3.S3
+	bucket  *string
+	BaseURL string
 }
 
 type Config struct {
@@ -34,7 +36,8 @@ func New(c Config) (*OBS, error) {
 		return nil, err
 	}
 	svc := s3.New(sess)
-	return &OBS{svc, aws.String(c.Bucket)}, nil
+	baseURL := path.Join(c.URL, c.Bucket)
+	return &OBS{svc, aws.String(c.Bucket), baseURL}, nil
 }
 
 func (o *OBS) PutObject(key string, body io.ReadSeeker) error {
@@ -42,6 +45,7 @@ func (o *OBS) PutObject(key string, body io.ReadSeeker) error {
 		Bucket: o.bucket,
 		Key:    aws.String(key),
 		Body:   body,
+		ACL:    aws.String(s3.BucketCannedACLPublicRead),
 	})
 	return err
 }

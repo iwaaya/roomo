@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"path"
 	"time"
 
 	"github.com/labstack/echo"
@@ -21,6 +22,8 @@ type Handler struct {
 }
 
 func (h *Handler) AddImage(c echo.Context) error {
+	fmt.Println("func AddImage")
+
 	key := time.Now().Format(OBJECTKEY_FORMAT)
 
 	// get an image from request body
@@ -36,7 +39,8 @@ func (h *Handler) AddImage(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, nil)
 	}
 
-	if err := h.db.CreateImage("https://s3.us-east-2.amazonaws.com/roomo-test/" + key); err != nil {
+	location := path.Join(h.obs.BaseURL, key)
+	if err := h.db.CreateImage(location); err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusInternalServerError, nil)
 	}
