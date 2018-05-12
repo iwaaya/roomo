@@ -48,7 +48,24 @@ func TestGetImageList(t *testing.T) {
 	req := httptest.NewRequest(echo.GET, "/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	h := new(Handler)
+
+	cf, err := NewConfig("./config.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	d, err := db.New(cf.DB)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	o, err := obs.New(cf.OBS)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	h := &Handler{db: d, obs: o}
 
 	h.GetImageList(c)
+	t.Log(rec.Body.String())
 }

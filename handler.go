@@ -39,6 +39,7 @@ func (h *Handler) AddImage(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, nil)
 	}
 
+	// create image data to db
 	location := path.Join(h.obs.BaseURL, key)
 	if err := h.db.CreateImage(location); err != nil {
 		fmt.Println(err)
@@ -48,25 +49,13 @@ func (h *Handler) AddImage(c echo.Context) error {
 }
 
 func (h *Handler) GetImageList(c echo.Context) error {
-	/*	sess, err := session.NewSession(&aws.Config{
-			Region: aws.String("us-east-2")},
-		)
-		if err != nil {
-			fmt.Println(err)
-			return c.JSON(http.StatusInternalServerError, nil)
-		}
+	fmt.Println("func GetImageList")
 
-		svc := s3.New(sess)
-
-		result, err := svc.ListObjects(&s3.ListObjectsInput{
-			Bucket: aws.String("roomo-test"),
-		})
-		if err != nil {
-			fmt.Println(err)
-			return c.JSON(http.StatusInternalServerError, nil)
-		}
-
-		fmt.Println(result)*/
-	return c.JSON(http.StatusOK, nil)
+	images, err := h.db.GetImageList()
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusInternalServerError, nil)
+	}
+	return c.JSON(http.StatusOK, images)
 
 }

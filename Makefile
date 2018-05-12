@@ -9,3 +9,7 @@ run:
 
 test:
 	go test -v *.go
+
+test-getimagelist:
+	go test -v -run GetImageList *.go
+

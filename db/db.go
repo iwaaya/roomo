@@ -18,7 +18,7 @@ type RDB struct {
 }
 
 func New(c Config) (*RDB, error) {
-	dst := fmt.Sprintf("%s:%s@%s/roomo", c.User, c.Pass, c.Host)
+	dst := fmt.Sprintf("%s:%s@%s/roomo?charset=utf8&parseTime=True&loc=Local", c.User, c.Pass, c.Host)
 	db, err := gorm.Open("mysql", dst)
 	if err != nil {
 		return nil, err
@@ -33,5 +33,7 @@ func (r *RDB) CreateImage(location string) error {
 }
 
 func (r *RDB) GetImageList() ([]Collection, error) {
-	return nil, nil
+	collections := []Collection{}
+	err := r.db.Find(&collections).Error
+	return collections, err
 }
