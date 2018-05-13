@@ -18,7 +18,7 @@ type Config struct {
 }
 
 func main() {
-	t, err := template.ParseFiles("./config.yaml.tpl")
+	t, err := template.ParseFiles("/etc/roomo/config.yaml.tpl")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -35,7 +35,7 @@ func main() {
 		OBS_BUCKET:    os.Getenv("OBS_BUCKET"),
 	}
 
-	file, err := os.Create("./config.yaml")
+	file, err := os.Create("/etc/roomo/config.yaml")
 	if err != nil {
 		fmt.Println(err)
 	}
