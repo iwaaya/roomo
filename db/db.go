@@ -18,7 +18,7 @@ type RDB struct {
 }
 
 func New(c Config) (*RDB, error) {
-	dst := fmt.Sprintf("%s:%s@%s/roomo?charset=utf8&parseTime=True&loc=Local", c.User, c.Pass, c.Host)
+	dst := fmt.Sprintf("%s:%s@tcp(%s:3306)/roomo?charset=utf8&parseTime=True&loc=Local", c.User, c.Pass, c.Host)
 	db, err := gorm.Open("mysql", dst)
 	if err != nil {
 		return nil, err
