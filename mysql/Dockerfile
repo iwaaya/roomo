@@ -1,3 +1,3 @@
 FROM mysql:5.7
 
-COPY roomo.sql /docker-entrypoint-initdb.d/prepare.sql
+COPY prepare.sql /docker-entrypoint-initdb.d/
